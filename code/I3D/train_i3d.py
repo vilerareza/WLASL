@@ -28,7 +28,8 @@ parser.add_argument('--train_split', type=str)
 parser.add_argument('--config_file', type=str)
 parser.add_argument('--save_model', type=str)
 parser.add_argument('--root', type=str)
-parser.add_argument('--weights_path', type=str)
+parser.add_argument('--weights_dir', type=str)
+parser.add_argument('--weights', type=str)
 parser.add_argument('--num_class', type=int)
 
 args = parser.parse_args()
@@ -45,6 +46,7 @@ def run(configs,
         root='/ssd/Charades_v1_rgb',
         train_split='charades/charades.json',
         save_model='',
+        weights_dir='',
         weights=None):
     print(configs)
 
@@ -67,10 +69,12 @@ def run(configs,
     # setup the model
     if mode == 'flow':
         i3d = InceptionI3d(400, in_channels=2)
-        i3d.load_state_dict(torch.load('weights/flow_imagenet.pt'))
+        # RV: Change with CLI weight arg
+        i3d.load_state_dict(torch.load(os.path.join(weights_dir, 'flow_imagenet.pt')))
     else:
         i3d = InceptionI3d(400, in_channels=3)
-        i3d.load_state_dict(torch.load('weights/rgb_imagenet.pt'))
+        # RV: Disabled. change with CLI weight arg
+        i3d.load_state_dict(torch.load(os.path.join(weights_dir, 'weights/rgb_imagenet.pt')))
 
     num_classes = dataset.num_classes
     i3d.replace_logits(num_classes)
@@ -204,10 +208,15 @@ if __name__ == '__main__':
     train_split = args.train_split
 
     # weights = 'archived/asl2000/FINAL_nslt_2000_iters=5104_top1=32.48_top5=57.31_top10=66.31.pt'
-    # weights = None
-    weights = args.weights_path
+    weights = None
+    weights_dir = args.weights_dir
     # config_file = 'configfiles/asl2000.ini'
 
     configs = Config(config_file)
     print(root, train_split)
-    run(configs=configs, mode=mode, root=root, save_model=save_model, train_split=train_split, weights=weights)
+    run(configs=configs, 
+        mode=mode, 
+        root=root, 
+        save_model=save_model, 
+        train_split=train_split, 
+        weights_dir=weights_dir)

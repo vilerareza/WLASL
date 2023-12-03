@@ -74,7 +74,7 @@ def run(configs,
     else:
         i3d = InceptionI3d(400, in_channels=3)
         # RV: Disabled. change with CLI weight arg
-        i3d.load_state_dict(torch.load(os.path.join(weights_dir, 'weights/rgb_imagenet.pt')))
+        i3d.load_state_dict(torch.load(os.path.join(weights_dir, 'rgb_imagenet.pt')))
 
     num_classes = dataset.num_classes
     i3d.replace_logits(num_classes)

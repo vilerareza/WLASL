@@ -23,6 +23,8 @@ def run(split_file, pose_data_root, configs, save_model_to=None):
     drop_p = configs.drop_p
     num_stages = configs.num_stages
 
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
     # setup dataset
     train_dataset = Sign_Dataset(index_file_path=split_file, split=['train', 'val'], pose_root=pose_data_root,
                                  img_transforms=None, video_transforms=None, num_samples=num_samples)
@@ -41,8 +43,14 @@ def run(split_file, pose_data_root, configs, save_model_to=None):
                                                      enumerate(train_dataset.label_encoder.classes_)]))
 
     # setup the model
-    model = GCN_muti_att(input_feature=num_samples*2, hidden_feature=num_samples*2,
-                         num_class=len(train_dataset.label_encoder.classes_), p_dropout=drop_p, num_stage=num_stages).cuda()
+
+    # RV: Add option for CPU
+    if device == 'cuda':
+        model = GCN_muti_att(input_feature=num_samples*2, hidden_feature=num_samples*2,
+                            num_class=len(train_dataset.label_encoder.classes_), p_dropout=drop_p, num_stage=num_stages).cuda()
+    else:
+        model = GCN_muti_att(input_feature=num_samples*2, hidden_feature=num_samples*2,
+                            num_class=len(train_dataset.label_encoder.classes_), p_dropout=drop_p, num_stage=num_stages).cpu()
 
     # setup training parameters, learning rate, optimizer, scheduler
     lr = configs.init_lr

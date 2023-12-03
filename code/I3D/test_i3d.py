@@ -62,6 +62,9 @@ def run(init_lr=0.1,
         batch_size=3 * 15,
         save_model='',
         weights=None):
+    
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
     # setup dataset
     test_transforms = transforms.Compose([videotransforms.CenterCrop(224)])
 
@@ -82,7 +85,13 @@ def run(init_lr=0.1,
         i3d.load_state_dict(torch.load('weights/rgb_imagenet.pt'))
     i3d.replace_logits(num_classes)
     i3d.load_state_dict(torch.load(weights))  # nslt_2000_000700.pt nslt_1000_010800 nslt_300_005100.pt(best_results)  nslt_300_005500.pt(results_reported) nslt_2000_011400
-    i3d.cuda()
+    
+    # RV: Add option for CPU
+    if device == 'cuda':
+        i3d.cuda()
+    else:
+        i3d.cpu()
+
     i3d = nn.DataParallel(i3d)
     i3d.eval()
 
@@ -134,6 +143,9 @@ def run(init_lr=0.1,
 
 
 def ensemble(mode, root, train_split, weights, num_classes):
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
     # setup dataset
     test_transforms = transforms.Compose([videotransforms.CenterCrop(224)])
     # test_transforms = transforms.Compose([])
@@ -155,7 +167,13 @@ def ensemble(mode, root, train_split, weights, num_classes):
         i3d.load_state_dict(torch.load('weights/rgb_imagenet.pt'))
     i3d.replace_logits(num_classes)
     i3d.load_state_dict(torch.load(weights))  # nslt_2000_000700.pt nslt_1000_010800 nslt_300_005100.pt(best_results)  nslt_300_005500.pt(results_reported) nslt_2000_011400
-    i3d.cuda()
+    
+    # RV: Add option for CPU
+    if device == 'cuda':
+        i3d.cuda()
+    else:
+        i3d.cpu()
+
     i3d = nn.DataParallel(i3d)
     i3d.eval()
 
@@ -224,17 +242,32 @@ def ensemble(mode, root, train_split, weights, num_classes):
 
 
 def run_on_tensor(weights, ip_tensor, num_classes):
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
     i3d = InceptionI3d(400, in_channels=3)
     # i3d.load_state_dict(torch.load('models/rgb_imagenet.pt'))
 
     i3d.replace_logits(num_classes)
     i3d.load_state_dict(torch.load(weights))  # nslt_2000_000700.pt nslt_1000_010800 nslt_300_005100.pt(best_results)  nslt_300_005500.pt(results_reported) nslt_2000_011400
-    i3d.cuda()
+    
+    # RV: Add option for CPU
+    if device == 'cuda':
+        i3d.cuda()
+    else:
+        i3d.cpu()
+
     i3d = nn.DataParallel(i3d)
     i3d.eval()
 
     t = ip_tensor.shape[2]
-    ip_tensor.cuda()
+
+    # RV: Add option for CPU
+    if device == 'cuda':
+        ip_tensor.cuda()
+    else:
+        ip_tensor.cpu()
+        
     per_frame_logits = i3d(ip_tensor)
 
     predictions = F.upsample(per_frame_logits, t, mode='linear')

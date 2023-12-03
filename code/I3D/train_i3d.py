@@ -50,6 +50,8 @@ def run(configs,
         weights=None):
     print(configs)
 
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
     # setup dataset
     train_transforms = transforms.Compose([videotransforms.RandomCrop(224),
                                            videotransforms.RandomHorizontalFlip(), ])
@@ -83,7 +85,11 @@ def run(configs,
         print('loading weights {}'.format(weights))
         i3d.load_state_dict(torch.load(weights))
 
-    i3d.cuda()
+    # RV: Add option for CPU
+    if device == 'cuda':
+        i3d.cuda()
+    else:
+        i3d.cpu()
     i3d = nn.DataParallel(i3d)
 
     lr = configs.init_lr
@@ -129,9 +135,20 @@ def run(configs,
                 inputs, labels, vid = data
 
                 # wrap them in Variable
-                inputs = inputs.cuda()
+
+                # RV: options for CPU
+                if device == 'cuda':
+                    inputs = inputs.cuda()
+                else:
+                    inputs = inputs.cpu()
+
                 t = inputs.size(2)
-                labels = labels.cuda()
+
+                # RV: options for CPU
+                if device == 'cuda':
+                    labels = labels.cuda()
+                else:
+                    labels = labels.cpu()
 
                 per_frame_logits = i3d(inputs, pretrained=False)
                 # upsample to input size
@@ -203,10 +220,15 @@ if __name__ == '__main__':
     train_split = args.train_split
     config_file = args.config_file
 
-    save_model = 'checkpoints/'
+    # RV: Changed to CLI arg
+    # save_model = 'checkpoints/'
+    save_model = args.save_model
+
+    # RV: Changed to CLI arg
     #train_split = 'preprocess/nslt_2000.json'
     train_split = args.train_split
 
+    # RV: Changed to CLI arg
     # weights = 'archived/asl2000/FINAL_nslt_2000_iters=5104_top1=32.48_top5=57.31_top10=66.31.pt'
     weights = None
     weights_dir = args.weights_dir

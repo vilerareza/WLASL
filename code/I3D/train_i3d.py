@@ -23,9 +23,11 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-mode', type=str, help='rgb or flow')
-parser.add_argument('-save_model', type=str)
-parser.add_argument('-root', type=str)
+parser.add_argument('--mode', type=str, help='rgb or flow')
+parser.add_argument('--train_split', type=str)
+parser.add_argument('--config_file', type=str)
+parser.add_argument('--save_model', type=str)
+parser.add_argument('--root', type=str)
 parser.add_argument('--num_class', type=int)
 
 args = parser.parse_args()
@@ -190,14 +192,19 @@ def run(configs,
 if __name__ == '__main__':
     # WLASL setting
     mode = 'rgb'
-    root = {'word': '../../data/WLASL2000'}
 
-    save_model = 'checkpoints/'
-    train_split = 'preprocess/nslt_2000.json'
+    root =  {'word': args.root}
+    # root = {'word': '../../data/WLASL2000'}
+    train_split = args.train_split
+    config_file = args.config_file
+
+    #save_model = 'checkpoints/'
+    #train_split = 'preprocess/nslt_2000.json'
+    train_split = args.train_split
 
     # weights = 'archived/asl2000/FINAL_nslt_2000_iters=5104_top1=32.48_top5=57.31_top10=66.31.pt'
     weights = None
-    config_file = 'configfiles/asl2000.ini'
+    # config_file = 'configfiles/asl2000.ini'
 
     configs = Config(config_file)
     print(root, train_split)

@@ -99,19 +99,29 @@ Training and Testing
 ---------------
 **I3D**
 
+Create a directory to put all dataset video files (do not organize it in subfolders). For example, create a directory `data` and copy all dataset video files into it. 
+
 ```
 cd WLASL
 mkdir data
-```
-put all the videos under ```data/```.
-```
 cp WLASL2000 -r data/
 ```
+
 To train models, first download [I3D weights pre-trained Kinetics](https://drive.google.com/file/d/1JgTRHGBRCHyHRT_rAF0fOjnfiFefXkEd/view?usp=sharing) and unzip it. You should see a folder ```I3D/weights/```.
 
 ```
-python train_i3d.py
+cd WLASL/code/I3D/
+python train_i3d.py --root=<dataset_dir> --train_split=<path_to_split_json> --config_file=<config_file> --weights_dir=<model_weights_dir>
 ```
+
+CLI Arguments:
+* `--root` _[string]_ - _[required]_ - Directory containing dataset videos. In above example is `data`.
+* `--train_split` _[string]_ - _[default='./preprocess/nslt_100.json']_ - Path to split definition JSPN file.
+* `--config_file` _[string]_ - _[default='./configfiles/asl100.ini']_ -  Path to training config file.
+* `--weights_dir` _[string]_ - _[default='./weights/']_ - Directory containing pre-trained model weight.
+* `--save_model` _[string]_ - _[default='./checkpoints/']_ - Directoryfor saving checkpoints during training. 
+
+
 To test pre-trained models, first download [WLASL pre-trained weights](https://drive.google.com/file/d/1jALimVOB69ifYkeT0Pe297S1z4U3jC48/view?usp=sharing) and unzip it. You should see a folder ```I3D/archived/```.
 
 ```

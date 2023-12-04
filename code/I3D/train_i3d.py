@@ -23,12 +23,12 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--mode', type=str, help='rgb or flow')
-parser.add_argument('--train_split', type=str)
-parser.add_argument('--config_file', type=str)
-parser.add_argument('--save_model', type=str)
 parser.add_argument('--root', type=str)
-parser.add_argument('--weights_dir', type=str)
+parser.add_argument('--mode', type=str, help='rgb or flow')
+parser.add_argument('--train_split', type=str, default='./preprocess/nslt_100.json')
+parser.add_argument('--config_file', type=str, default='./configfiles/asl100.ini')
+parser.add_argument('--save_model', type=str, default='./preprocess/nslt_100.json')
+parser.add_argument('--weights_dir', type=str, default = './weights/')
 parser.add_argument('--weights', type=str)
 parser.add_argument('--num_class', type=int)
 
@@ -223,6 +223,7 @@ if __name__ == '__main__':
     # RV: Changed to CLI arg
     # save_model = 'checkpoints/'
     save_model = args.save_model
+    os.path.makedirs(save_model, exist_ok = True)
 
     # RV: Changed to CLI arg
     #train_split = 'preprocess/nslt_2000.json'

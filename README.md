@@ -107,8 +107,10 @@ mkdir data
 cp WLASL2000 -r data/
 ```
 
-To train models, first download [I3D weights pre-trained Kinetics](https://drive.google.com/file/d/1JgTRHGBRCHyHRT_rAF0fOjnfiFefXkEd/view?usp=sharing) and unzip it. You should see a folder ```I3D/weights/```.
+To train models, first download [I3D weights pre-trained Kinetics](https://drive.google.com/file/d/1JgTRHGBRCHyHRT_rAF0fOjnfiFefXkEd/view?usp=sharing) and unzip it. Create a directory (for example `I3D/weights/`) and copy the weight files into it.
 
+
+To start the training:
 ```
 cd WLASL/code/I3D/
 python train_i3d.py --root=<dataset_dir> --train_split=<path_to_split_json> --config_file=<config_file> --weights_dir=<model_weights_dir>

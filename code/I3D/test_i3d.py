@@ -64,6 +64,7 @@ def load_rgb_frames_from_video(video_path, start=0, num=-1):
 
 
 def run(init_lr=0.1,
+        num_classes=100,
         max_steps=64e3,
         mode='rgb',
         root='/ssd/Charades_v1_rgb',
@@ -309,7 +310,10 @@ if __name__ == '__main__':
     # ================== test i3d on a dataset ==============
     # need to add argparse
     mode = 'rgb'
-    num_classes = 2000
+
+    # RV: Changed to CLI arg
+    # num_classes = 2000
+    num_classes = args.num_class
 
     # RV: Changed to CLI arg
     # root = '../../data/WLASL2000'
@@ -330,4 +334,4 @@ if __name__ == '__main__':
     # RV: Changed to CLI arg
     weights_dir = args.weights_dir
 
-    run(mode=mode, root=root, save_model=save_model, train_split=train_split, weights=weights, weights_dir=weights_dir)
+    run(mode=mode, num_classes=num_classes, root=root, save_model=save_model, train_split=train_split, weights=weights, weights_dir=weights_dir)

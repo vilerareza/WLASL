@@ -70,7 +70,8 @@ def run(init_lr=0.1,
         train_split='charades/charades.json',
         batch_size=3 * 15,
         save_model='',
-        weights=None):
+        weights=None,
+        weights_dir=''):
     
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -88,10 +89,15 @@ def run(init_lr=0.1,
     # setup the model
     if mode == 'flow':
         i3d = InceptionI3d(400, in_channels=2)
-        i3d.load_state_dict(torch.load('weights/flow_imagenet.pt'))
+        # RV: Change with CLI weight arg
+        # i3d.load_state_dict(torch.load('weights/flow_imagenet.pt'))
+        i3d.load_state_dict(torch.load(os.path.join(weights_dir, 'flow_imagenet.pt')))
     else:
         i3d = InceptionI3d(400, in_channels=3)
-        i3d.load_state_dict(torch.load('weights/rgb_imagenet.pt'))
+        # RV: Disabled. change with CLI weight arg
+        # i3d.load_state_dict(torch.load('weights/rgb_imagenet.pt'))
+        i3d.load_state_dict(torch.load(os.path.join(weights_dir, 'rgb_imagenet.pt')))
+        
     i3d.replace_logits(num_classes)
     i3d.load_state_dict(torch.load(weights))  # nslt_2000_000700.pt nslt_1000_010800 nslt_300_005100.pt(best_results)  nslt_300_005500.pt(results_reported) nslt_2000_011400
     
@@ -321,4 +327,7 @@ if __name__ == '__main__':
     # weights = 'archived/asl100/FINAL_nslt_100_iters=896_top1=65.89_top5=84.11_top10=89.92.pt'
     weights = args.weights
 
-    run(mode=mode, root=root, save_model=save_model, train_split=train_split, weights=weights)
+    # RV: Changed to CLI arg
+    weights_dir = args.weights_dir
+
+    run(mode=mode, root=root, save_model=save_model, train_split=train_split, weights=weights, weights_dir=weights_dir)

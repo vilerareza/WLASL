@@ -154,20 +154,9 @@ def run(init_lr=0.1,
     # per-class accuracy
     
     # RV: Eliminate divide by 0
-    try:
-        top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp))
-    except:
-        top1_per_class = 0
-    
-    try:
-        top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp))
-    except:
-        top5_per_class = 0
-    
-    try:
-        top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp))
-    except:
-        top10_per_class = 0
+    top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp), where=(top1_tp + top1_fp)!=0)
+    top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp), where=(top5_tp + top5_fp)!=0)
+    top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp), where=(top10_tp + top10_fp)!=0)
 
     print('top-k average per class acc: {}, {}, {}'.format(top1_per_class, top5_per_class, top10_per_class))
 
@@ -265,9 +254,11 @@ def ensemble(mode, root, train_split, weights, num_classes):
         print(video_id, float(correct) / len(dataloaders["test"]), float(correct_5) / len(dataloaders["test"]),
               float(correct_10) / len(dataloaders["test"]))
 
-    top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp))
-    top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp))
-    top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp))
+    # RV: Eliminate divide by 0
+    top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp), where=(top1_tp + top1_fp)!=0)
+    top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp), where=(top5_tp + top5_fp)!=0)
+    top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp), where=(top10_tp + top10_fp)!=0)
+
     print('top-k average per class acc: {}, {}, {}'.format(top1_per_class, top5_per_class, top10_per_class))
 
 

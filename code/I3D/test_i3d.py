@@ -154,21 +154,21 @@ def run(init_lr=0.1,
     # per-class accuracy
     
     # RV: Eliminate divide by 0
-    if (top1_tp + top1_fp) == 0:
-        top1_per_class = 0
-    else:
+    try:
         top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp))
+    except:
+        top1_per_class = 0
     
-    if (top5_tp + top5_fp) == 0:
-        top5_per_class = 0
-    else:
+    try:
         top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp))
+    except:
+        top5_per_class = 0
     
-    if (top10_tp + top10_fp) == 0:
-        top10_per_class = 0
-    else:
+    try:
         top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp))
-        
+    except:
+        top10_per_class = 0
+
     print('top-k average per class acc: {}, {}, {}'.format(top1_per_class, top5_per_class, top10_per_class))
 
 

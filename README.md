@@ -124,12 +124,18 @@ CLI Arguments:
 * `--save_model` _[string]_ - _[default='./checkpoints/']_ - Directoryfor saving checkpoints during training. 
 
 
-To test pre-trained models, first download [WLASL pre-trained weights](https://drive.google.com/file/d/1jALimVOB69ifYkeT0Pe297S1z4U3jC48/view?usp=sharing) and unzip it. You should see a folder ```I3D/archived/```.
+To test pre-trained models, first download [WLASL pre-trained weights](https://drive.google.com/file/d/1jALimVOB69ifYkeT0Pe297S1z4U3jC48/view?usp=sharing) and unzip it. Create a directory (for example `I3D/archived/`) and copy the weight files into it.
 
 ```
-python test_i3d.py
+cd WLASL/code/I3D/
+python test_i3d.py --root=<dataset_dir> --train_split=<path_to_split_json> --weightse=<path_to_weight_file>
 ```
-By default the script tests WLASL2000. To test other subsets, please change line 264, 270 in ```test_i3d.py``` properly.
+
+CLI Arguments:
+* `--root` _[string]_ - _[required]_ - Directory containing dataset videos. .
+* `--train_split` _[string]_ - _[default='./preprocess/nslt_100.json']_ - Path to split definition JSPN file.
+* `--weights` _[string]_ - _[default='archived/asl100/FINAL_nslt_100_iters=896_top1=65.89_top5=84.11_top10=89.92.pt'']_ - Directory containing pre-trained model weight.
+
 
 A previous release can be found [here](https://drive.google.com/file/d/1vktQxvRHNS9psOQVKx5-dsERlmiYFRXC/view).
 

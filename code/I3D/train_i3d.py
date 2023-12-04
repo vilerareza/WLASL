@@ -27,7 +27,7 @@ parser.add_argument('--root', type=str)
 parser.add_argument('--mode', type=str, help='rgb or flow')
 parser.add_argument('--train_split', type=str, default='./preprocess/nslt_100.json')
 parser.add_argument('--config_file', type=str, default='./configfiles/asl100.ini')
-parser.add_argument('--save_model', type=str, default='./preprocess/nslt_100.json')
+parser.add_argument('--save_model', type=str, default='./checkpoints/')
 parser.add_argument('--weights_dir', type=str, default = './weights/')
 parser.add_argument('--weights', type=str)
 parser.add_argument('--num_class', type=int)
@@ -123,7 +123,7 @@ def run(configs,
             num_iter = 0
             optimizer.zero_grad()
 
-            confusion_matrix = np.zeros((num_classes, num_classes), dtype=np.int)
+            confusion_matrix = np.zeros((num_classes, num_classes), dtype=np.int32)
             # Iterate over data.
             for data in dataloaders[phase]:
                 num_iter += 1
@@ -152,7 +152,7 @@ def run(configs,
 
                 per_frame_logits = i3d(inputs, pretrained=False)
                 # upsample to input size
-                per_frame_logits = F.upsample(per_frame_logits, t, mode='linear')
+                per_frame_logits = F.interpolate(per_frame_logits, t, mode='linear')
 
                 # compute localization loss
                 loc_loss = F.binary_cross_entropy_with_logits(per_frame_logits, labels)

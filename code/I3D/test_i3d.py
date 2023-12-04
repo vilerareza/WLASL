@@ -151,10 +151,24 @@ def run(init_lr=0.1,
         print(video_id, float(correct) / len(dataloaders["test"]), float(correct_5) / len(dataloaders["test"]),
               float(correct_10) / len(dataloaders["test"]))
 
-        # per-class accuracy
-    top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp))
-    top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp))
-    top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp))
+    # per-class accuracy
+    
+    # RV: Eliminate divide by 0
+    if (top1_tp + top1_fp) == 0:
+        top1_per_class = 0
+    else:
+        top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp))
+    
+    if (top5_tp + top5_fp) == 0:
+        top5_per_class = 0
+    else:
+        top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp))
+    
+    if (top10_tp + top10_fp) == 0:
+        top10_per_class = 0
+    else:
+        top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp))
+        
     print('top-k average per class acc: {}, {}, {}'.format(top1_per_class, top5_per_class, top10_per_class))
 
 

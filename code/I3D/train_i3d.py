@@ -223,7 +223,7 @@ if __name__ == '__main__':
     # RV: Changed to CLI arg
     # save_model = 'checkpoints/'
     save_model = args.save_model
-    os.path.makedirs(save_model, exist_ok = True)
+    os.makedirs(save_model, exist_ok = True)
 
     # RV: Changed to CLI arg
     #train_split = 'preprocess/nslt_2000.json'

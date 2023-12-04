@@ -128,12 +128,12 @@ To test pre-trained models, first download [WLASL pre-trained weights](https://d
 
 ```
 cd WLASL/code/I3D/
-python test_i3d.py --num_class=<number_of_class> --root=<dataset_dir> --train_split=<path_to_split_json> --weightse=<path_to_weight_file>
+python test_i3d.py --num_classes=<number_of_class> --root=<dataset_dir> --train_split=<path_to_split_json> --weightse=<path_to_weight_file>
 ```
 
 CLI Arguments:
 * `--root` _[string]_ - _[required]_ - Directory containing dataset videos.
-* `--num_class` _[int]_ - _[default=100]_ - Number of class.
+* `--num_classes` _[int]_ - _[default=100]_ - Number of class.
 * `--train_split` _[string]_ - _[default='./preprocess/nslt_100.json']_ - Path to split definition JSPN file.
 * `--weights` _[string]_ - _[default='archived/asl100/FINAL_nslt_100_iters=896_top1=65.89_top5=84.11_top10=89.92.pt']_ - Directory containing pre-trained model weight.
 

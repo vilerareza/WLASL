@@ -30,7 +30,7 @@ parser.add_argument('--config_file', type=str, default='./configfiles/asl100.ini
 parser.add_argument('--save_model', type=str, default='./checkpoints/')
 parser.add_argument('--weights_dir', type=str, default = './weights/')
 parser.add_argument('--weights', type=str, default='archived/asl100/FINAL_nslt_100_iters=896_top1=65.89_top5=84.11_top10=89.92.pt')
-parser.add_argument('--num_class', type=int)
+parser.add_argument('--num_classes', type=int, default=100)
 
 args = parser.parse_args()
 
@@ -313,7 +313,7 @@ if __name__ == '__main__':
 
     # RV: Changed to CLI arg
     # num_classes = 2000
-    num_classes = args.num_class
+    num_classes = args.num_classes
 
     # RV: Changed to CLI arg
     # root = '../../data/WLASL2000'

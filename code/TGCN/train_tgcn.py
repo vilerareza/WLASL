@@ -21,11 +21,14 @@ parser.add_argument('--subset', type=str, default='asl100')
 parser.add_argument('--config_file', type=str, default='./configs/asl100.ini')
 parser.add_argument('--split_file', type=str)
 parser.add_argument('--pose_data', type=str)
+parser.add_argument('--output_dir', type=str)
 
 args = parser.parse_args()
 
 
-def run(split_file, pose_data_root, configs, save_model_to=None):
+def run(split_file, pose_data_root, configs, save_model_to=None, output_dir='./output'):
+
+
     epochs = configs.max_epochs
     log_interval = configs.log_interval
     num_samples = configs.num_samples
@@ -105,10 +108,11 @@ def run(split_file, pose_data_root, configs, save_model_to=None):
         epoch_val_scores.append(val_score[0])
 
         # save all train test results
-        np.save('output/epoch_training_losses.npy', np.array(epoch_train_losses))
-        np.save('output/epoch_training_scores.npy', np.array(epoch_train_scores))
-        np.save('output/epoch_test_loss.npy', np.array(epoch_val_losses))
-        np.save('output/epoch_test_score.npy', np.array(epoch_val_scores))
+        np.save(f'{output_dir}/epoch_training_losses.npy', np.array(epoch_train_losses))
+        np.save(f'{output_dir}/epoch_training_scores.npy', np.array(epoch_train_scores))
+        np.save(f'{output_dir}/epoch_test_loss.npy', np.array(epoch_val_losses))
+        np.save(f'{output_dir}/epoch_test_score.npy', np.array(epoch_val_scores))
+
 
         if val_score[0] > best_test_acc:
             best_test_acc = val_score[0]
@@ -120,9 +124,11 @@ def run(split_file, pose_data_root, configs, save_model_to=None):
     utils.plot_curves()
 
     class_names = train_dataset.label_encoder.classes_
+
+    # RV: Set output according to CLI
     utils.plot_confusion_matrix(train_gts, train_preds, classes=class_names, normalize=False,
-                                save_to='output/train-conf-mat')
-    utils.plot_confusion_matrix(val_gts, val_preds, classes=class_names, normalize=False, save_to='output/val-conf-mat')
+                                save_to=f'{output_dir}/train-conf-mat')
+    utils.plot_confusion_matrix(val_gts, val_preds, classes=class_names, normalize=False, save_to=f'{output_dir}/val-conf-mat')
 
 
 if __name__ == "__main__":
@@ -148,9 +154,12 @@ if __name__ == "__main__":
     config_file = args.config_file
     configs = Config(config_file)
 
-    logging.basicConfig(filename='output/{}.log'.format(os.path.basename(config_file)[:-4]), level=logging.DEBUG, filemode='w+')
+    # RV: Change to CLI
+    output_dir = args.output_dir
+
+    logging.basicConfig(filename=f'{output_dir}/{os.path.basename(config_file)[:-4]}.log', level=logging.DEBUG, filemode='w+')
 
     logging.info('Calling main.run()')
-    run(split_file=split_file, configs=configs, pose_data_root=pose_data_root)
+    run(split_file=split_file, configs=configs, pose_data_root=pose_data_root, output_dir=output_dir)
     logging.info('Finished main.run()')
     # utils.plot_curves()

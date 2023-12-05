@@ -1,6 +1,7 @@
 import logging
 import os
 
+import argparse
 import numpy as np
 import torch
 import torch.optim as optim
@@ -12,7 +13,16 @@ from tgcn_model import GCN_muti_att
 from sign_dataset import Sign_Dataset
 from train_utils import train, validation
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+parser = argparse.ArgumentParser()
+parser.add_argument('--root', type=str)
+parser.add_argument('--subset', type=str, default='asl100')
+parser.add_argument('--config_file', type=str, default='./configs/asl100.ini')
+parser.add_argument('--split_file', type=str)
+parser.add_argument('--pose_data', type=str)
+
+args = parser.parse_args()
 
 
 def run(split_file, pose_data_root, configs, save_model_to=None):
@@ -116,13 +126,26 @@ def run(split_file, pose_data_root, configs, save_model_to=None):
 
 
 if __name__ == "__main__":
-    root = '/media/anudisk/github/WLASL'
+    
+    # RV: Change to CLI
+    # root = '/media/anudisk/github/WLASL'
+    root = args.root
 
-    subset = 'asl100'
+    # RV: Change to CLI
+    # subset = 'asl100'
+    subset = args.subset
 
-    split_file = os.path.join(root, 'data/splits/{}.json'.format(subset))
-    pose_data_root = os.path.join(root, 'data/pose_per_individual_videos')
-    config_file = os.path.join(root, 'code/TGCN/configs/{}.ini'.format(subset))
+    # RV: Change to CLI
+    # split_file = os.path.join(root, 'data/splits/{}.json'.format(subset))
+    split_file = args.split_file
+
+    # RV: Change to CLI
+    # pose_data_root = os.path.join(root, 'data/pose_per_individual_videos')
+    pose_data_root = args.pose_data
+
+    # RV: Change to CLI
+    # config_file = os.path.join(root, 'code/TGCN/configs/{}.ini'.format(subset))
+    config_file = args.config_file
     configs = Config(config_file)
 
     logging.basicConfig(filename='output/{}.log'.format(os.path.basename(config_file)[:-4]), level=logging.DEBUG, filemode='w+')

@@ -1,5 +1,5 @@
+import argparse
 import os
-
 from configs import Config
 from sign_dataset import Sign_Dataset
 import numpy as np
@@ -8,8 +8,21 @@ from sklearn.metrics import accuracy_score
 
 from tgcn_model import GCN_muti_att
 
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+parser = argparse.ArgumentParser()
+parser.add_argument('--root', type=str)
+parser.add_argument('--trained_on', type=str, default='asl100')
+parser.add_argument('--config_file', type=str, default='./configs/asl100.ini')
+parser.add_argument('--split_file', type=str)
+parser.add_argument('--pose_data', type=str)
+parser.add_argument('--checkpoint', type=str)
 
-def test(model, test_loader):
+args = parser.parse_args()
+
+
+def test(model, test_loader, device):
+
     # set model as testing mode
     model.eval()
 
@@ -26,7 +39,11 @@ def test(model, test_loader):
             print('starting batch: {}'.format(batch_idx))
             # distribute data to device
             X, y, video_ids = data
-            X, y = X.cuda(), y.cuda().view(-1, )
+
+            if device == "cuda":
+                X, y = X.cuda(), y.cuda().view(-1, )
+            else:
+                X, y = X.cpu(), y.cpu().view(-1, )
 
             all_output = []
 
@@ -87,17 +104,34 @@ def compute_top_n_accuracy(truths, preds, n):
 
 if __name__ == '__main__':
 
-    # change root and subset accordingly.
-    root = '/media/anudisk/github/WLASL'
-    trained_on = 'asl2000'
+    # RV: Device option
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    checkpoint = 'ckpt.pth'
+    # RV: Change to CLI
+    # root = '/media/anudisk/github/WLASL'
+    root = args.root
 
-    split_file = os.path.join(root, 'data/splits/{}.json'.format(trained_on))
+    # RV: Change to CLI
+    # trained_on = 'asl2000'
+    trained_on = args.trained_on
+
+    # RV: Change to CLI
+    # checkpoint = 'ckpt.pth'
+    checkpoint = args.checkpoint
+
+    # RV: Change to CLI
+    # split_file = os.path.join(root, 'data/splits/{}.json'.format(trained_on))
     # test_on_split_file = os.path.join(root, 'data/splits-with-dialect-annotated/{}.json'.format(tested_on))
+    split_file = args.split_file
 
-    pose_data_root = os.path.join(root, 'data/pose_per_individual_videos')
-    config_file = os.path.join(root, 'code/TGCN/archived/{}/{}.ini'.format(trained_on, trained_on))
+    # RV: Change to CLI
+    # pose_data_root = os.path.join(root, 'data/pose_per_individual_videos')
+    pose_data_root = args.pose_data
+    
+    # RV: Change to CLI
+    # config_file = os.path.join(root, 'code/TGCN/archived/{}/{}.ini'.format(trained_on, trained_on))
+    config_file = args.config_file
+    
     configs = Config(config_file)
 
     num_samples = configs.num_samples
@@ -115,8 +149,12 @@ if __name__ == '__main__':
     data_loader = torch.utils.data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 
     # setup the model
-    model = GCN_muti_att(input_feature=num_samples * 2, hidden_feature=hidden_size,
-                         num_class=int(trained_on[3:]), p_dropout=drop_p, num_stage=num_stages).cuda()
+    if device == 'cude':
+        model = GCN_muti_att(input_feature=num_samples * 2, hidden_feature=hidden_size,
+                            num_class=int(trained_on[3:]), p_dropout=drop_p, num_stage=num_stages).cuda()
+    else:
+        model = GCN_muti_att(input_feature=num_samples * 2, hidden_feature=hidden_size,
+                        num_class=int(trained_on[3:]), p_dropout=drop_p, num_stage=num_stages).cpu()
 
     print('Loading model...')
 
@@ -124,4 +162,4 @@ if __name__ == '__main__':
     model.load_state_dict(checkpoint)
     print('Finish loading model!')
 
-    test(model, data_loader)
+    test(model, data_loader, device)

@@ -157,6 +157,8 @@ if __name__ == "__main__":
     # RV: Change to CLI
     output_dir = args.output_dir
 
+    os.makedirs(output_dir, exist_ok=True)
+
     logging.basicConfig(filename=f'{output_dir}/{os.path.basename(config_file)[:-4]}.log', level=logging.DEBUG, filemode='w+')
 
     logging.info('Calling main.run()')

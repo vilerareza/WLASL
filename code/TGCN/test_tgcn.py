@@ -11,12 +11,11 @@ from tgcn_model import GCN_muti_att
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 parser = argparse.ArgumentParser()
-parser.add_argument('--root', type=str)
 parser.add_argument('--trained_on', type=str, default='asl100')
 parser.add_argument('--config_file', type=str, default='./configs/asl100.ini')
 parser.add_argument('--split_file', type=str)
 parser.add_argument('--pose_data', type=str)
-parser.add_argument('--checkpoint', type=str)
+parser.add_argument('--weight_file', type=str)
 
 args = parser.parse_args()
 
@@ -108,10 +107,6 @@ if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # RV: Change to CLI
-    # root = '/media/anudisk/github/WLASL'
-    root = args.root
-
-    # RV: Change to CLI
     # trained_on = 'asl2000'
     trained_on = args.trained_on
 
@@ -149,7 +144,7 @@ if __name__ == '__main__':
     data_loader = torch.utils.data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 
     # setup the model
-    if device == 'cude':
+    if device == 'cuda':
         model = GCN_muti_att(input_feature=num_samples * 2, hidden_feature=hidden_size,
                             num_class=int(trained_on[3:]), p_dropout=drop_p, num_stage=num_stages).cuda()
     else:
@@ -158,7 +153,9 @@ if __name__ == '__main__':
 
     print('Loading model...')
 
-    checkpoint = torch.load(os.path.join(root, 'code/TGCN/archived/{}/{}'.format(trained_on, checkpoint)))
+    # RV: Change to CLI
+    # checkpoint = torch.load(os.path.join(root, 'code/TGCN/archived/{}/{}'.format(trained_on, checkpoint)))
+    checkpoint = torch.load(args.weight_file)
     model.load_state_dict(checkpoint)
     print('Finish loading model!')
 

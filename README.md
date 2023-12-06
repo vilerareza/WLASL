@@ -118,7 +118,7 @@ python train_i3d.py --root=<dataset_dir> --train_split=<path_to_split_json> --co
 
 CLI Arguments:
 * `--root` _[string]_ - _[required]_ - Directory containing dataset videos. In above example is `data`.
-* `--train_split` _[string]_ - _[default='./preprocess/nslt_100.json']_ - Path to split definition JSPN file.
+* `--train_split` _[string]_ - _[default='./preprocess/nslt_100.json']_ - Path to split definition JSON file.
 * `--config_file` _[string]_ - _[default='./configfiles/asl100.ini']_ -  Path to training config file.
 * `--weights_dir` _[string]_ - _[default='./weights/']_ - Directory containing pre-trained model weight.
 * `--save_model` _[string]_ - _[default='./checkpoints/']_ - Directoryfor saving checkpoints during training. 
@@ -134,7 +134,7 @@ python test_i3d.py --num_classes=<number_of_class> --root=<dataset_dir> --train_
 CLI Arguments:
 * `--root` _[string]_ - _[required]_ - Directory containing dataset videos.
 * `--num_classes` _[int]_ - _[default=100]_ - Number of class.
-* `--train_split` _[string]_ - _[default='./preprocess/nslt_100.json']_ - Path to split definition JSPN file.
+* `--train_split` _[string]_ - _[default='./preprocess/nslt_100.json']_ - Path to split definition JSON file.
 * `--weights` _[string]_ - _[default='archived/asl100/FINAL_nslt_100_iters=896_top1=65.89_top5=84.11_top10=89.92.pt']_ - Directory containing pre-trained model weight.
 
 
@@ -145,15 +145,32 @@ A previous release can be found [here](https://drive.google.com/file/d/1vktQxvRH
 
 Download [splits file](https://drive.google.com/file/d/16CWkbMLyEbdBkrxAPaxSXFP_aSxKzNN4/view?usp=sharing) and [body keypoints](https://drive.google.com/file/d/1k5mfrc2g4ZEzzNjW6CEVjLvNTZcmPanB/view?usp=sharing). Unzip them into ```WLASL/data```. You should see ```WLASL/data/splits``` and ```WLASL/data/pose_per_individual_videos``` folders.
 
-To train the model, modify paths in ```train_tgcn.py main()``` to point to WLASL root.
+To start the training: 
 ```
-python train_tgcn.py
+python train_tgcn.py --subset=<asl100> --root=<dataset_dir> --config_file=<path_to_config_file> --split_file=<path_to_split_file> --pose_data=<pose_data_dir> --output_dir=<output_dir>
 ```
+
+CLI Arguments:
+* `--root` _[string]_ - _[required]_ - Directory containing dataset videos. In above example is `data`.
+* `--pose_data` _[string]_ - Directory containing pose keypoints files.
+* `--split_file` _[string]_ - Path to split definition JSON file.
+* `--config_file` _[string]_ -  Path to training config file.
+* `--output_dir` _[string]_ - Directory for writing checkpoints and log.
+* `--subset` _[string]_ -  Default to asl100.
+
 
 To test the model, first download [pre-trained models](https://drive.google.com/file/d/1dzvocsaylRsjqaY4r_lyRihPZn0I6AA_/view?usp=sharing) and unzip to ```code/TGCN/archived```. Then run
 ```
-python test_tgcn.py
+python test_tgcn.py --weight_file=<weight_file> --trained_on=<asl100> --config_file=<path_to_config_file> --split_file=<path_to_split_file> --pose_data=<pose_data_dir>
 ```
+
+CLI Arguments:
+* `--pose_data` _[string]_ - Directory containing pose keypoints files.
+* `--weight_file` _[string]_ - PAth to pretrained model weight.
+* `--split_file` _[string]_ - Path to split definition JSON file.
+* `--config_file` _[string]_ -  Path to training config file.
+* `--trained_on` _[string]_ -  Default to asl100.
+
 
 License
 ---------------

@@ -28,10 +28,14 @@ def gen(entry_list):
             frame_start = instance['frame_start']
             frame_end = instance['frame_end']
 
-            save_to = os.path.join('/home/dxli/workspace/nslt/code/Pose-GCN/posegcn/features', vid)
+            # RV: Change relevant dir
+            # save_to = os.path.join('/home/dxli/workspace/nslt/code/Pose-GCN/posegcn/features', vid)
 
-            if not os.path.exists(save_to):
-                os.mkdir(save_to)
+            # if not os.path.exists(save_to):
+            #     os.mkdir(save_to)
+
+            save_to = '/posegcn/features/vid/'
+            os.makedirs(save_to, exist_ok=True)
 
             for frame_id in range(frame_start, frame_end + 1):
                 frame_id = 'image_{}'.format(str(frame_id).zfill(5))

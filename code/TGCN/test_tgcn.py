@@ -112,7 +112,7 @@ if __name__ == '__main__':
 
     # RV: Change to CLI
     # checkpoint = 'ckpt.pth'
-    checkpoint = args.checkpoint
+    weight_file = args.weight_file
 
     # RV: Change to CLI
     # split_file = os.path.join(root, 'data/splits/{}.json'.format(trained_on))
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     # RV: Change to CLI
     # checkpoint = torch.load(os.path.join(root, 'code/TGCN/archived/{}/{}'.format(trained_on, checkpoint)))
-    checkpoint = torch.load(args.weight_file)
+    checkpoint = torch.load(weight_file)
     model.load_state_dict(checkpoint)
     print('Finish loading model!')
 

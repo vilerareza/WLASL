@@ -19,8 +19,7 @@ from pytorch_i3d import InceptionI3d
 from datasets.nslt_dataset_all import NSLT as Dataset
 import cv2
 
-from tensorflow import tf
-import tensorflow_addons as tfa
+from sklearn.metrics import classification_report
 
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -160,9 +159,6 @@ def run(init_lr=0.1,
         predictions_all.append(torch.argmax(predictions[0]).item())
         labels_all.append(labels[0].item())
 
-    print ('PREDS', type(predictions_all), predictions_all.shape)
-    print ('LABELS', type(labels_all), labels_all.shape)
-
     # RV: Eliminate divide by 0
     top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp), where=(top1_tp + top1_fp)!=0)
     top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp), where=(top5_tp + top5_fp)!=0)
@@ -176,33 +172,11 @@ def run(init_lr=0.1,
 # RV: Print metrics
 def print_metrics(predictions, labels):
 
-    metric_a = tf.keras.metrics.CategoricalAccuracy()
-    metric_p = tf.keras.metrics.Precision(thresholds=0.5)
-    metric_r = tf.keras.metrics.Recall()
-    metric_f1 = tfa.metrics.F1Score(num_classes=14)
+    # Get class names
+    # target_names = list(class_dict.values())
 
-    accuracies = []
-    precisions = []
-    recalls = []
-    f1 = []
-
-    for idx, pred in enumerate(predictions):
-        metric_a.reset_state()
-        metric_p.reset_state()
-        metric_r.reset_state()
-        metric_f1.reset_state()
-        metric_a.update_state(labels[idx], pred)
-        metric_p.update_state(labels[idx], pred)
-        metric_r.update_state(labels[idx], pred)
-        metric_f1.update_state([labels[idx]], pred)
-        accuracies.append(metric_a.result().numpy())
-        precisions.append(metric_p.result().numpy())
-        recalls.append(metric_r.result().numpy())
-        f1.append(metric_f1.result().numpy())
-
-    print (f'Mean accuracy: {np.mean(accuracies)}')
-    print (f'Mean precisions: {np.mean(precisions)}')
-    print (f'Mean recalls: {np.mean(recalls)}')
+    # Create report
+    print(classification_report(labels, predictions, zero_division=0))
 
 
 def ensemble(mode, root, train_split, weights, num_classes):

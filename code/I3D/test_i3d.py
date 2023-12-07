@@ -124,6 +124,9 @@ def run(init_lr=0.1,
     top10_fp = np.zeros(num_classes, dtype=np.int32)
     top10_tp = np.zeros(num_classes, dtype=np.int32)
 
+    predictions_all = []
+    labels_all = []
+
     for data in dataloaders["test"]:
         inputs, labels, video_id = data  # inputs: b, c, t, h, w
 
@@ -151,8 +154,12 @@ def run(init_lr=0.1,
         print(video_id, float(correct) / len(dataloaders["test"]), float(correct_5) / len(dataloaders["test"]),
               float(correct_10) / len(dataloaders["test"]))
 
-    # per-class accuracy
-    
+        predictions_all.append(torch.argmax(predictions[0]).item())
+        labels_all.append(labels[0].item())
+
+    print ('PREDS', type(predictions_all), predictions_all.shape)
+    print ('LABELS', type(labels_all), labels_all.shape)
+
     # RV: Eliminate divide by 0
     top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp), where=(top1_tp + top1_fp)!=0)
     top5_per_class = np.mean(top5_tp / (top5_tp + top5_fp), where=(top5_tp + top5_fp)!=0)

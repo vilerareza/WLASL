@@ -19,6 +19,9 @@ from pytorch_i3d import InceptionI3d
 from datasets.nslt_dataset_all import NSLT as Dataset
 import cv2
 
+from tensorflow import tf
+import tensorflow_addons as tfa
+
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
@@ -166,6 +169,40 @@ def run(init_lr=0.1,
     top10_per_class = np.mean(top10_tp / (top10_tp + top10_fp), where=(top10_tp + top10_fp)!=0)
 
     print('top-k average per class acc: {}, {}, {}'.format(top1_per_class, top5_per_class, top10_per_class))
+
+    print_metrics(predictions_all, labels_all)
+
+
+# RV: Print metrics
+def print_metrics(predictions, labels):
+
+    metric_a = tf.keras.metrics.CategoricalAccuracy()
+    metric_p = tf.keras.metrics.Precision(thresholds=0.5)
+    metric_r = tf.keras.metrics.Recall()
+    metric_f1 = tfa.metrics.F1Score(num_classes=14)
+
+    accuracies = []
+    precisions = []
+    recalls = []
+    f1 = []
+
+    for idx, pred in enumerate(predictions):
+        metric_a.reset_state()
+        metric_p.reset_state()
+        metric_r.reset_state()
+        metric_f1.reset_state()
+        metric_a.update_state(labels[idx], pred)
+        metric_p.update_state(labels[idx], pred)
+        metric_r.update_state(labels[idx], pred)
+        metric_f1.update_state([labels[idx]], pred)
+        accuracies.append(metric_a.result().numpy())
+        precisions.append(metric_p.result().numpy())
+        recalls.append(metric_r.result().numpy())
+        f1.append(metric_f1.result().numpy())
+
+    print (f'Mean accuracy: {np.mean(accuracies)}')
+    print (f'Mean precisions: {np.mean(precisions)}')
+    print (f'Mean recalls: {np.mean(recalls)}')
 
 
 def ensemble(mode, root, train_split, weights, num_classes):

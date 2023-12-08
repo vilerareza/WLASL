@@ -4,7 +4,8 @@ from configs import Config
 from sign_dataset import Sign_Dataset
 import numpy as np
 import torch
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
+
 
 from tgcn_model import GCN_muti_att
 
@@ -89,6 +90,9 @@ def test(model, test_loader, device):
     print('\nVal. set ({:d} samples): top-3 Accuracy: {:.2f}%\n'.format(len(all_y), 100 * top3acc))
     print('\nVal. set ({:d} samples): top-5 Accuracy: {:.2f}%\n'.format(len(all_y), 100 * top5acc))
     print('\nVal. set ({:d} samples): top-10 Accuracy: {:.2f}%\n'.format(len(all_y), 100 * top10acc))
+
+    # Create report
+    print(classification_report(all_y, all_y_pred, zero_division=0))
 
 
 def compute_top_n_accuracy(truths, preds, n):

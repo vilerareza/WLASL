@@ -155,8 +155,8 @@ def run(init_lr=0.1,
             top1_tp[labels[0].item()] += 1
         else:
             top1_fp[labels[0].item()] += 1
-        print(video_id, float(correct) / len(dataloaders["test"]), float(correct_5) / len(dataloaders["test"]),
-              float(correct_10) / len(dataloaders["test"]))
+        # print(video_id, float(correct) / len(dataloaders["test"]), float(correct_5) / len(dataloaders["test"]),
+        #       float(correct_10) / len(dataloaders["test"]))
 
         predictions_all.append(torch.argmax(predictions[0]).item())
         labels_all.append(labels[0].item())
@@ -290,8 +290,8 @@ def ensemble(mode, root, train_split, weights, num_classes):
             top1_tp[labels[0].item()] += 1
         else:
             top1_fp[labels[0].item()] += 1
-        print(video_id, float(correct) / len(dataloaders["test"]), float(correct_5) / len(dataloaders["test"]),
-              float(correct_10) / len(dataloaders["test"]))
+        #print(video_id, float(correct) / len(dataloaders["test"]), float(correct_5) / len(dataloaders["test"]),
+        #      float(correct_10) / len(dataloaders["test"]))
 
     # RV: Eliminate divide by 0
     top1_per_class = np.mean(top1_tp / (top1_tp + top1_fp), where=(top1_tp + top1_fp)!=0)

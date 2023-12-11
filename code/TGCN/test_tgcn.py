@@ -104,7 +104,7 @@ def print_metrics(predictions, labels):
     # Create csv report
     report = classification_report(labels, predictions, zero_division=0, output_dict=True)
     
-    with open('report_i3d_test.csv', 'w', newline='') as csvfile:
+    with open('report_tgcn_test.csv', 'w', newline='') as csvfile:
         fieldnames = ['class_id', 'precision', 'recall', 'f1-score', 'support']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()

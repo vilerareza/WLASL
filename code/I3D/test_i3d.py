@@ -184,19 +184,19 @@ def print_metrics(predictions, labels):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
-    for class_id in report.keys():
+        for class_id in report.keys():
 
-        if class_id == 'accuracy': 
-            writer.writerow({})
-            writer.writerow({'class_id': class_id, 
-                             'f1-score': round(report[class_id], 2)})
-        
-        else:
-            writer.writerow({'class_id': class_id, 
-                            'precision': round(report[class_id]['precision'], 2),
-                            'recall': round(report[class_id]['recall'], 2),
-                            'f1-score': round(report[class_id]['f1-score'], 2),
-                            'support': round(report[class_id]['support'], 2)})
+            if class_id == 'accuracy': 
+                writer.writerow({})
+                writer.writerow({'class_id': class_id, 
+                                'f1-score': round(report[class_id], 2)})
+            
+            else:
+                writer.writerow({'class_id': class_id, 
+                                'precision': round(report[class_id]['precision'], 2),
+                                'recall': round(report[class_id]['recall'], 2),
+                                'f1-score': round(report[class_id]['f1-score'], 2),
+                                'support': round(report[class_id]['support'], 2)})
     
 
 

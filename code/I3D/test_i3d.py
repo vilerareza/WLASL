@@ -176,7 +176,17 @@ def print_metrics(predictions, labels):
     # target_names = list(class_dict.values())
 
     # Create report
+    report = classification_report(labels, predictions, zero_division=0)
+    report_dict = classification_report(labels, predictions, zero_division=0, output_dict=True)
     print(classification_report(labels, predictions, zero_division=0))
+    import pickle
+
+    with open ('report.p', 'wb') as file:
+        pickle.dump(report, file)
+
+    with open ('report_dict.p', 'wb') as file_dict:
+        pickle.dump(report_dict, file_dict)
+    
 
 
 def ensemble(mode, root, train_split, weights, num_classes):

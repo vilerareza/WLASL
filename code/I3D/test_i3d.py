@@ -21,6 +21,8 @@ import cv2
 
 from sklearn.metrics import classification_report
 
+import csv
+
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
@@ -172,20 +174,29 @@ def run(init_lr=0.1,
 # RV: Print metrics
 def print_metrics(predictions, labels):
 
-    # Get class names
-    # target_names = list(class_dict.values())
-
-    # Create report
-    report = classification_report(labels, predictions, zero_division=0)
-    report_dict = classification_report(labels, predictions, zero_division=0, output_dict=True)
     print(classification_report(labels, predictions, zero_division=0))
-    import pickle
+    
+    # Create csv report
+    report = classification_report(labels, predictions, zero_division=0, output_dict=True)
+    
+    with open('report_i3d_test.csv', 'w', newline='') as csvfile:
+        fieldnames = ['class_id', 'precision', 'recall', 'f1-score', 'support']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
 
-    with open ('report.p', 'wb') as file:
-        pickle.dump(report, file)
+    for class_id in report.keys():
 
-    with open ('report_dict.p', 'wb') as file_dict:
-        pickle.dump(report_dict, file_dict)
+        if class_id == 'accuracy': 
+            writer.writerow({})
+            writer.writerow({'class_id': class_id, 
+                             'f1-score': round(report[class_id], 2)})
+        
+        else:
+            writer.writerow({'class_id': class_id, 
+                            'precision': round(report[class_id]['precision'], 2),
+                            'recall': round(report[class_id]['recall'], 2),
+                            'f1-score': round(report[class_id]['f1-score'], 2),
+                            'support': round(report[class_id]['support'], 2)})
     
 
 

@@ -1,13 +1,14 @@
 import argparse
 import os
+import csv
 from configs import Config
 from sign_dataset import Sign_Dataset
 import numpy as np
 import torch
 from sklearn.metrics import accuracy_score, classification_report
 
-
 from tgcn_model import GCN_muti_att
+
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
@@ -92,7 +93,35 @@ def test(model, test_loader, device):
     print('\nVal. set ({:d} samples): top-10 Accuracy: {:.2f}%\n'.format(len(all_y), 100 * top10acc))
 
     # Create report
-    print(classification_report(all_y, all_y_pred, zero_division=0))
+    print_metrics(all_y_pred, all_y)
+
+
+# RV: Print metrics
+def print_metrics(predictions, labels):
+
+    print(classification_report(labels, predictions, zero_division=0))
+    
+    # Create csv report
+    report = classification_report(labels, predictions, zero_division=0, output_dict=True)
+    
+    with open('report_i3d_test.csv', 'w', newline='') as csvfile:
+        fieldnames = ['class_id', 'precision', 'recall', 'f1-score', 'support']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+    for class_id in report.keys():
+
+        if class_id == 'accuracy': 
+            writer.writerow({})
+            writer.writerow({'class_id': class_id, 
+                             'f1-score': round(report[class_id], 2)})
+        
+        else:
+            writer.writerow({'class_id': class_id, 
+                            'precision': round(report[class_id]['precision'], 2),
+                            'recall': round(report[class_id]['recall'], 2),
+                            'f1-score': round(report[class_id]['f1-score'], 2),
+                            'support': round(report[class_id]['support'], 2)})
 
 
 def compute_top_n_accuracy(truths, preds, n):

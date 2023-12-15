@@ -1,6 +1,7 @@
 import argparse
 import os
 import csv
+import gc
 from configs import Config
 from sign_dataset import Sign_Dataset
 import numpy as np
@@ -65,6 +66,9 @@ def test(model, test_loader, device):
             all_y_pred.extend(y_pred)
             all_video_ids.extend(video_ids)
             all_pool_out.extend(output)
+
+            del X ; del y
+            gc.collect()
 
     # compute accuracy
     all_y = torch.stack(all_y, dim=0)
